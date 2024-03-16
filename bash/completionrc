@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [ -d $CARGO_HOME ]; then
+    eval "$(rustup completions bash)"
+    eval "$(rustup completions bash cargo)"
+fi

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+case $- in
+    *i*) ;;
+    *) return;;
+esac
+
+bind '"\e[B": history-search-forward'
+bind '"\e[A": history-search-backward'
+
+bind 'set completion-ignore-case on'
+bind 'set show-all-if-ambiguous on'
+
+bind 'set colored-stats on'
+bind 'set visible-stats on'
+bind 'set mark-symlinked-directories on'
+bind 'set colored-completion-prefix on'
+bind 'set menu-complete-display-prefix on'
+
+[ -f $XDG_CONFIG_HOME/aliasrc ] && . $XDG_CONFIG_HOME/aliasrc
+[ -f $XDG_CONFIG_HOME/completionrc ] && . $XDG_CONFIG_HOME/completionrc
+
+[ -x $CARGO_HOME/bin/starship ] && eval "$(starship init bash)"
+[ -x $CARGO_HOME/bin/zoxide ] && eval "$(zoxide init bash)"
