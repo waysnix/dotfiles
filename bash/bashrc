@@ -21,4 +21,3 @@ bind 'set menu-complete-display-prefix on'
 [ -f $XDG_CONFIG_HOME/completionrc ] && . $XDG_CONFIG_HOME/completionrc
 
 [ -x $CARGO_HOME/bin/starship ] && eval "$(starship init bash)"
-[ -x $CARGO_HOME/bin/zoxide ] && eval "$(zoxide init bash)"

@@ -5,6 +5,7 @@ alias reboot='systemctl reboot'
 alias suspend='systemctl suspend'
 alias hibernate='systemctl hibernate'
 
+alias l='ls'
 alias ls='ls -F --color --group-directories-first'
 alias ll='ls -oh'
 alias la='ls -A'
