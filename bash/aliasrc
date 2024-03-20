@@ -12,9 +12,9 @@ alias la='ls -A'
 alias lla='ll -A'
 
 if [ -x $CARGO_HOME/bin/eza ]; then
-    alias ls='eza -F --group-directories-first'
-    alias ll='ls -l'
-    alias lt='ls -T'
+	alias ls='eza -F --group-directories-first'
+	alias ll='ls -l'
+	alias lt='ls -T'
 fi
 [ -x $CARGO_HOME/bin/xcp ] && alias cp='xcp'
 [ -x $CARGO_HOME/bin/rg ] && alias grep='rg'

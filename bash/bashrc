@@ -1,8 +1,8 @@
 #!/bin/bash
 
 case $- in
-    *i*) ;;
-    *) return;;
+	*i*) ;;
+	*) return;;
 esac
 
 bind '"\e[B": history-search-forward'
