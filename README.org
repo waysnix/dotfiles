@@ -1,0 +1,124 @@
+#+title: Waysnix's Debian Install Manual
+#+author: Vincent Liu
+
+* Why Debian?
+
+You can read [[https://www.debian.org/intro/why_debian][Reasons to use Debian]].
+
+* Install Debian
+
+You can refer to [[https://www.debian.org/releases/stable/amd64/index.en.html][Debian GNU/Linux Installation Guide]] for minimal installation.
+
+/Please avoid partitioning for swap, as I plan to ues a swap file later./
+
+* Console keyboard layout
+
+I'm a [[https://colemak.org][Colemak layout]] user, and I want to remap =Ctrl= to =Caps Lock=. /If you don't want it, you can pass this./
+
+~$ sudo vi /etc/default/keyboard~
+
+#+begin_example
+  ...
+  XKBVARIANT="colemak"
+  XKBOPTIONS="caps:ctrl_modifier"
+  ...
+#+end_example
+
+* Hibernation into swap file
+
+** Swap file
+
+As an alternative to creating an entire partition, a swap file offers the abbility to vary its size on-the-fly, and is more easily removed altogether.
+
+*** Create a swap file (16 GiB, either double your RAM size or equal to it):
+
+~$ sudo dd if=/dev/zero of=/swapfile bs=1M count=16k status=progress~
+
+*** Set the right permissions:
+
+~$ sudo chmod 600 /swapfile~
+
+*** Format it:
+
+~$ sudo mkswap -U clear /swapfile~
+
+*** Activate the swap file:
+
+~$ sudo swapon /swapfile~
+
+*** Edit =fstab= file:
+
+~$ sudo vi /etc/fstab~
+
+#+begin_example
+  ...
+  /swapfile none swap defaults 0 0
+#+end_example
+
+The swap file has been successfully created now.
+
+** Enable hibernation
+
+*** Find out the =UUID= of the partition on which the swap file resides:
+
+~$ sudo findmnt -no UUID -T /swapfile~
+
+*** Find out the swap file offset:
+
+~$ sudo filefrag -v /swapfile~
+
+#+begin_example
+  ...
+   ext:  logical_offset:       physical_offset:  length:  expected:  flags:
+     0:      0..  32767:  56066048..  56098815:   32768:
+  ...
+#+end_example
+
+In this example, the swap file offset is ~56066048~ (The valus is in the first row of the ~physical_offset~ column).
+
+*** Add the kernel parameters to GRUB:
+
+~$ sudo vi /etc/default/grub~
+
+#+begin_example
+  ...
+  GRUB_CMDLINE_LINUX_DEFAULT="quiet resume=UUID={SWAP_UUID} resume_offset={SWAP_OFFSET}"
+  ...
+#+end_example
+
+Use the values obtained earlier for ~{SWAP_UUID}~ and ~{SWAP_OFFSET}~.
+
+~$ sudo update-grub~
+
+*** Add the kernel parameters to initramfs:
+
+~$ sudo vi /etc/initramfs-tools/conf.d/resume~
+
+#+begin_example
+  RESUME=UUID={SWAP_UUID} resume_offset={SWAP_OFFSET}
+#+end_example
+
+~$ sudo update-intramfs -c -k all~
+
+Now you can successfully enter hibernation.
+
+** Power management
+
+You can install =polkitd= to grant users power mangement permissions.
+
+*** If you wish, you can change the behavior of ACPI events:
+
+~$ sudo vi /etc/systemd/logind.conf~
+
+#+begin_example
+  ...
+  [Login]
+  HandlePowerKey=hibernate
+  HandlePowerKeyLongPress=ignore
+  HandleLidSwitch=suspend
+  HandleLidSwitchExternalPower=suspend
+  handleLidSwitchDocked=ignore
+  ...
+#+end_example
+
+* Wireless network
